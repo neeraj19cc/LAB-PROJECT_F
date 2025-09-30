@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .dashboard-container {
+            display: none;
+            padding: 30px;
+        }
+
+        .header {
+            background: #667eea;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: -30px -30px 30px -30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.occupied {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #dc3545;
+            padding: 8px 16px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .logout-btn {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div class="container login-container" id="loginPage">
+        <h2 style="color: #333; margin-bottom: 30px; font-size: 2rem;">Hotel Management System</h2>
+        <div id="loginAlert"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <p style="margin-top: 20px; color: #666; font-size: 14px;">
+            Demo credentials: admin / password
+        </p>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div class="container dashboard-container" id="dashboardPage">
+        <button class="btn logout-btn" onclick="logout()">Logout</button>
+        
+        <div class="header">
+            <h1>Hotel Management Dashboard</h1>
+            <p>Manage your hotel bookings and room availability</p>
+        </div>
+
+        <div id="dashboardAlert"></div>
+
+        <div class="grid">
+            <!-- Room Booking Section -->
+            <div class="section">
+                <h3>Room Booking</h3>
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="guestName">Guest Name</label>
+                        <input type="text" id="guestName" name="guestName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="roomNumber">Room Number</label>
+                        <input type="number" id="roomNumber" name="roomNumber" min="1" max="500" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="checkInDate">Check-in Date</label>
+                            <input type="date" id="checkInDate" name="checkInDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="checkOutDate">Check-out Date</label>
+                            <input type="date" id="checkOutDate" name="checkOutDate" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">Book Room</button>
+                </form>
+            </div>
+
+            <!-- Room Availability Section -->
+            <div class="section">
+                <h3>Check Room Availability</h3>
+                <div class="form-group">
+                    <label for="checkRoomNumber">Room Number</label>
+                    <input type="number" id="checkRoomNumber" name="checkRoomNumber" min="1" max="500" required>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="checkAvailability()">Check Availability</button>
+                <div id="availabilityResult" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- Booking List Section -->
+        <div class="section">
+            <h3>Current Bookings</h3>
+            <div class="table-container">
+                <table id="bookingsTable">
+                    <thead>
+                        <tr>
+                            <th>Guest Name</th>
+                            <th>Room Number</th>
+                            <th>Check-in Date</th>
+                            <th>Check-out Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <!-- Bookings will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize the application
+        let bookings = JSON.parse(localStorage.getItem('hotelBookings')) || [];
+
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('checkInDate').min = today;
+            document.getElementById('checkOutDate').min = today;
+            
+            // Update check-out min date when check-in changes
+            document.getElementById('checkInDate').addEventListener('change', function() {
+                document.getElementById('checkOutDate').min = this.value;
+            });
+        });
+
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Simple authentication (in real app, this would be server-side)
+            if (username === 'admin' && password === 'password') {
+                showAlert('loginAlert', 'Login successful!', 'success');
+                setTimeout(() => {
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('dashboardPage').style.display = 'block';
+                    loadBookings();
+                }, 1000);
+            } else {
+                showAlert('loginAlert', 'Invalid username or password!', 'error');
+            }
+        });
+
+        // Room booking functionality
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const guestName = document.getElementById('guestName').value;
+            const roomNumber = parseInt(document.getElementById('roomNumber').value);
+            const checkInDate = document.getElementById('checkInDate').value;
+            const checkOutDate = document.getElementById('checkOutDate').value;
+
+            // Validate dates
+            if (new Date(checkOutDate) <= new Date(checkInDate)) {
+                showAlert('dashboardAlert', 'Check-out date must be after check-in date!', 'error');
+                return;
+            }
+
+            // Check if room is available for the selected dates
+            const isRoomAvailable = checkRoomAvailabilityForDates(roomNumber, checkInDate, checkOutDate);
+            
+            if (!isRoomAvailable) {
+                showAlert('dashboardAlert', `Room ${roomNumber} is not available for the selected dates!`, 'error');
+                return;
+            }
+
+            // Create new booking
+            const booking = {
+                id: Date.now(),
+                guestName,
+                roomNumber,
+                checkInDate,
+                checkOutDate,
+                status: 'Active'
+            };
+
+            bookings.push(booking);
+            localStorage.setItem('hotelBookings', JSON.stringify(bookings));
+            
+            showAlert('dashboardAlert', `Room ${roomNumber} booked successfully for ${guestName}!`, 'success');
+            document.getElementById('bookingForm').reset();
+            loadBookings();
+        });
+
+        // Check room availability
+        function checkAvailability() {
+            const roomNumber = parseInt(document.getElementById('checkRoomNumber').value);
+            
+            if (!roomNumber) {
+                showAlert('dashboardAlert', 'Please enter a room number!', 'error');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+            const isAvailable = checkRoomAvailabilityForDates(roomNumber, today, today);
+            
+            const resultDiv = document.getElementById('availabilityResult');
+            if (isAvailable) {
+                resultDiv.innerHTML = `<div class="status available">Room ${roomNumber} is Available</div>`;
+            } else {
+                resultDiv.innerHTML = `<div class="status occupied">Room ${roomNumber} is Occupied</div>`;
+            }
+        }
+
+        // Check if room is available for specific dates
+        function checkRoomAvailabilityForDates(roomNumber, checkIn, checkOut) {
+            return !bookings.some(booking => {
+                if (booking.roomNumber !== roomNumber || booking.status !== 'Active') {
+                    return false;
+                }
+                
+                const bookingCheckIn = new Date(booking.checkInDate);
+                const bookingCheckOut = new Date(booking.checkOutDate);
+                const newCheckIn = new Date(checkIn);
+                const newCheckOut = new Date(checkOut);
+                
+                // Check for date overlap
+                return (newCheckIn < bookingCheckOut && newCheckOut > bookingCheckIn);
+            });
+        }
+
+        // Load and display bookings
+        function loadBookings() {
+            const tableBody = document.getElementById('bookingsTableBody');
+            tableBody.innerHTML = '';
+
+            if (bookings.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #666;">No bookings found</td></tr>';
+                return;
+            }
+
+            bookings.forEach(booking => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${booking.guestName}</td>
+                    <td>${booking.roomNumber}</td>
+                    <td>${booking.checkInDate}</td>
+                    <td>${booking.checkOutDate}</td>
+                    <td><span class="status ${booking.status.toLowerCase()}">${booking.status}</span></td>
+                    <td>
+                        <button onclick="cancelBooking(${booking.id})" class="btn" style="background: #dc3545; padding: 6px 12px; font-size: 12px; width: auto;">
+                            Cancel
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Cancel booking
+        function cancelBooking(bookingId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                bookings = bookings.filter(booking => booking.id !== bookingId);
+                localStorage.setItem('hotelBookings', JSON.stringify(bookings));
+                showAlert('dashboardAlert', 'Booking cancelled successfully!', 'success');
+                loadBookings();
+            }
+        }
+
+        // Show alert messages
+        function showAlert(containerId, message, type) {
+            const alertContainer = document.getElementById(containerId);
+            alertContainer.innerHTML = `<div class="alert ${type}">${message}</div>`;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Logout functionality
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                document.getElementById('dashboardPage').style.display = 'none';
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('loginForm').reset();
+                document.getElementById('loginAlert').innerHTML = '';
+                document.getElementById('dashboardAlert').innerHTML = '';
+            }
+        }
+    </script>
+</body>
+</html>

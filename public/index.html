@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            padding: 40px;
+        }
+
+        .dashboard-container {
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        .btn-success {
+            background: #28a745;
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+            margin-right: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status.available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.occupied {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .room-type {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .room-type.ac {
+            background: #cce5ff;
+            color: #0066cc;
+        }
+
+        .room-type.nonac {
+            background: #fff2cc;
+            color: #cc8800;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .filter-section label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+
+        .filter-section select {
+            padding: 8px 12px;
+            border: 1px solid #e1e5e9;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+
+        .room-management-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .room-management-section input {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .room-management-section select {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .room-management-section button {
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .room-management-section {
+                flex-direction: column;
+            }
+
+            .room-management-section input,
+            .room-management-section select,
+            .room-management-section button {
+                width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="container login-container">
+        <div class="header">
+            <h1>Hotel Management</h1>
+            <p>Please login to continue</p>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="form-group" style="display:flex;align-items:center;gap:8px;">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                <label for="rememberMe" style="margin:0; font-weight:400;">Remember me on this device</label>
+            </div>
+            
+            <button type="submit" class="btn">Login</button>
+        </form>
+        
+        <button id="showRegisterBtn" type="button" class="btn btn-secondary" style="margin-top: 12px;">New user? Register</button>
+
+        <form id="registerForm" class="hidden" style="margin-top: 16px;">
+            <div class="form-group">
+                <label for="regUsername">Username:</label>
+                <input type="text" id="regUsername" name="regUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password (min 6 chars):</label>
+                <input type="password" id="regPassword" name="regPassword" minlength="6" required>
+            </div>
+            <div class="form-group">
+                <label for="regConfirm">Confirm Password:</label>
+                <input type="password" id="regConfirm" name="regConfirm" minlength="6" required>
+            </div>
+            <button type="submit" class="btn">Create Account</button>
+            <button id="cancelRegisterBtn" type="button" class="btn btn-secondary" style="margin-top: 10px;">Back to Login</button>
+        </form>
+
+        <div id="loginError" class="error hidden"></div>
+        <div id="registerError" class="error hidden"></div>
+        <div id="registerMessage" class="hidden"></div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; font-size: 14px;">
+            <strong>Demo Credentials:</strong><br>
+            Username: admin<br>
+            Password: password
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboardPage" class="container dashboard-container hidden">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        
+        <div class="header">
+            <h1>Hotel Management Dashboard</h1>
+            <p>Manage your hotel bookings and room availability</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Room Booking Section -->
+            <div class="card">
+                <h3>Room Booking</h3>
+                
+                <!-- Added room type filter for booking -->
+                <div class="filter-section">
+                    <label for="roomTypeFilter">Filter by Room Type:</label>
+                    <select id="roomTypeFilter" onchange="filterRoomsByType()">
+                        <option value="">All Rooms</option>
+                        <option value="AC">AC Rooms</option>
+                        <option value="Non-AC">Non-AC Rooms</option>
+                    </select>
+                </div>
+                
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="guestName">Guest Name:</label>
+                        <input type="text" id="guestName" name="guestName" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="roomNumber">Room Number:</label>
+                        <select id="roomNumber" name="roomNumber" required>
+                            <option value="">Select Room</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="checkIn">Check-in Date:</label>
+                        <input type="date" id="checkIn" name="checkIn" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="checkOut">Check-out Date:</label>
+                        <input type="date" id="checkOut" name="checkOut" required>
+                    </div>
+                    
+                    <button type="submit" class="btn">Book Room</button>
+                </form>
+                
+                <div id="bookingMessage" class="hidden"></div>
+            </div>
+
+            <!-- Room Availability Section -->
+            <div class="card">
+                <h3>Check Room Availability</h3>
+                <form id="availabilityForm">
+                    <div class="form-group">
+                        <label for="availabilityRoom">Room Number:</label>
+                        <select id="availabilityRoom" name="availabilityRoom" required>
+                            <option value="">Select Room</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="availabilityCheckIn">Check-in Date (Optional):</label>
+                        <input type="date" id="availabilityCheckIn" name="availabilityCheckIn">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="availabilityCheckOut">Check-out Date (Optional):</label>
+                        <input type="date" id="availabilityCheckOut" name="availabilityCheckOut">
+                    </div>
+                    
+                    <button type="submit" class="btn">Check Availability</button>
+                </form>
+                
+                <div id="availabilityResult" class="hidden"></div>
+            </div>
+
+            <!-- Room Management Section -->
+            <div class="card">
+                <h3>Room Management</h3>
+                
+                <div class="room-management-section">
+                    <input type="text" id="newRoomNumber" placeholder="Room Number (e.g., 601)" required>
+                    <select id="newRoomType" required>
+                        <option value="">Select Type</option>
+                        <option value="AC">AC</option>
+                        <option value="Non-AC">Non-AC</option>
+                    </select>
+                    <button class="btn btn-success" onclick="addRoom()">Add Room</button>
+                </div>
+                
+                <div class="room-management-section">
+                    <select id="removeRoomSelect" required>
+                        <option value="">Select Room to Remove</option>
+                    </select>
+                    <button class="btn btn-danger" onclick="removeRoom()">Remove Room</button>
+                </div>
+                
+                <div id="roomManagementMessage" class="hidden"></div>
+                
+                <button class="btn btn-info" onclick="loadRoomStatus()" style="margin-top: 15px;">View Room Status</button>
+                <div id="roomStatusList" class="hidden"></div>
+            </div>
+        </div>
+
+        <!-- Booking List Section -->
+        <div class="card" style="margin-top: 30px;">
+            <h3>Current Bookings</h3>
+            <div id="bookingsList">
+                <div class="loading">Loading bookings...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentUser = null;
+        let allRooms = [];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Clear stale localStorage if rememberMe was not set previously
+            if (localStorage.getItem('currentUser') && localStorage.getItem('rememberMe') !== 'true') {
+                localStorage.removeItem('currentUser');
+            }
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            const checkInEl = document.getElementById('checkIn');
+            const checkOutEl = document.getElementById('checkOut');
+            const availInEl = document.getElementById('availabilityCheckIn');
+            const availOutEl = document.getElementById('availabilityCheckOut');
+            if (checkInEl) checkInEl.min = today;
+            if (checkOutEl) checkOutEl.min = today;
+            if (availInEl) availInEl.min = today;
+            if (availOutEl) availOutEl.min = today;
+            
+            // ping backend to surface clear error if server is down
+            try {
+                await fetch(`${API_BASE}/verify`, { method: 'GET' });
+            } catch (err) {
+                showError('loginError', 'Cannot reach server. Please start the backend and reload.');
+            }
+
+            // Check if user is already logged in
+            checkAuthStatus();
+        });
+
+        // Check authentication status
+        async function checkAuthStatus() {
+            // Prefer sessionStorage (tab session). Only use localStorage if rememberMe is explicitly set.
+            const sessionUser = sessionStorage.getItem('currentUser');
+            const persistentAllowed = localStorage.getItem('rememberMe') === 'true';
+            const persistentUser = persistentAllowed ? localStorage.getItem('currentUser') : null;
+
+            const savedUser = sessionUser || persistentUser;
+
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            } else {
+                // ensure login page is visible
+                document.getElementById('dashboardPage').classList.add('hidden');
+                document.getElementById('loginPage').classList.remove('hidden');
+            }
+        }
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('rememberMe').checked; // Read remember me
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    // Store in sessionStorage always, and optionally in localStorage if rememberMe
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    if (remember) {
+                        localStorage.setItem('rememberMe', 'true');
+                        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    } else {
+                        localStorage.removeItem('rememberMe');
+                        localStorage.removeItem('currentUser');
+                    }
+                    showDashboard();
+                } else {
+                    showError('loginError', data.error || 'Login failed');
+                }
+            } catch (error) {
+                showError('loginError', 'Connection error. Please make sure the server is running.');
+            }
+        });
+
+        // Show dashboard and load data
+        async function showDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            
+            await loadRooms();
+            await loadBookings();
+            await loadRemoveRoomOptions();
+        }
+
+        // Load available rooms
+        async function loadRooms() {
+            try {
+                const response = await fetch(`${API_BASE}/rooms`);
+                const data = await response.json();
+
+                if (data.success) {
+                    allRooms = data.rooms;
+                    populateRoomSelects(allRooms);
+                }
+            } catch (error) {
+                console.error('Error loading rooms:', error);
+            }
+        }
+
+        function populateRoomSelects(rooms) {
+            const roomSelects = [
+                document.getElementById('roomNumber'),
+                document.getElementById('availabilityRoom'),
+                document.getElementById('removeRoomSelect')
+            ];
+
+            roomSelects.forEach(select => {
+                select.innerHTML = '<option value="">Select Room</option>';
+                rooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.room_number;
+                    option.textContent = `Room ${room.room_number} (${room.room_type})`;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        function filterRoomsByType() {
+            const selectedType = document.getElementById('roomTypeFilter').value;
+            let filteredRooms = allRooms;
+            
+            if (selectedType) {
+                filteredRooms = allRooms.filter(room => room.room_type === selectedType);
+            }
+            
+            populateRoomSelects(filteredRooms);
+        }
+
+        // Room booking form handler
+        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const bookingData = {
+                guestName: formData.get('guestName'),
+                roomNumber: formData.get('roomNumber'),
+                checkIn: formData.get('checkIn'),
+                checkOut: formData.get('checkOut')
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('bookingMessage', 'Room booked successfully!', 'success');
+                    e.target.reset();
+                    await loadBookings();
+                } else {
+                    showMessage('bookingMessage', data.error || 'Booking failed', 'error');
+                }
+            } catch (error) {
+                showMessage('bookingMessage', 'Connection error. Please try again.', 'error');
+            }
+        });
+
+        // Room availability form handler
+        document.getElementById('availabilityForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const availabilityData = {
+                roomNumber: formData.get('availabilityRoom'),
+                checkIn: formData.get('availabilityCheckIn') || null,
+                checkOut: formData.get('availabilityCheckOut') || null
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/check-availability`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(availabilityData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const resultDiv = document.getElementById('availabilityResult');
+                    const status = data.available ? 'Available' : 'Not Available';
+                    const statusClass = data.available ? 'available' : 'occupied';
+                    
+                    let resultHTML = `
+                        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px;">
+                            <strong>Room ${data.roomNumber}:</strong> 
+                            <span class="status ${statusClass}">${status}</span>
+                    `;
+
+                    if (!data.available && data.conflictingBookings) {
+                        resultHTML += '<br><br><strong>Conflicting bookings:</strong><ul>';
+                        data.conflictingBookings.forEach(booking => {
+                            resultHTML += `<li>${booking.guest_name} (${booking.check_in} to ${booking.check_out})</li>`;
+                        });
+                        resultHTML += '</ul>';
+                    }
+
+                    resultHTML += '</div>';
+                    resultDiv.innerHTML = resultHTML;
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    showMessage('availabilityResult', data.error || 'Check failed', 'error');
+                }
+            } catch (error) {
+                showMessage('availabilityResult', 'Connection error. Please try again.', 'error');
+            }
+        });
+
+        // Load and display bookings
+        async function loadBookings() {
+            try {
+                const response = await fetch(`${API_BASE}/bookings`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayBookings(data.bookings);
+                } else {
+                    document.getElementById('bookingsList').innerHTML = '<div class="error">Failed to load bookings</div>';
+                }
+            } catch (error) {
+                document.getElementById('bookingsList').innerHTML = '<div class="error">Connection error. Please make sure the server is running.</div>';
+            }
+        }
+
+        function displayBookings(bookings) {
+            const bookingsContainer = document.getElementById('bookingsList');
+            
+            if (bookings.length === 0) {
+                bookingsContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No bookings found.</p>';
+                return;
+            }
+
+            let tableHTML = `
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Guest Name</th>
+                                <th>Room Number</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            bookings.forEach(booking => {
+                const today = new Date().toISOString().split('T')[0];
+                const checkInDate = booking.check_in;
+                const canCheckOut = checkInDate <= today; // Can check out if check-in date has passed
+                
+                tableHTML += `
+                    <tr>
+                        <td>${booking.guest_name}</td>
+                        <td>
+                            Room ${booking.room_number}
+                            <span class="room-type ${booking.room_type.toLowerCase().replace('-', '')}">${booking.room_type}</span>
+                        </td>
+                        <td>${new Date(booking.check_in).toLocaleDateString()}</td>
+                        <td>${new Date(booking.check_out).toLocaleDateString()}</td>
+                        <td>
+                            ${canCheckOut ? `<button class="btn btn-success" onclick="checkOutGuest(${booking.id})">Check-out</button>` : ''}
+                            <button class="btn btn-warning" onclick="manualVacate(${booking.id})">Manual Vacate</button>
+                            <button class="btn btn-danger" onclick="cancelBooking(${booking.id})">Cancel</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            bookingsContainer.innerHTML = tableHTML;
+        }
+
+        async function checkOutGuest(bookingId) {
+            if (!confirm('Are you sure you want to check out this guest?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings/${bookingId}/checkout`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Guest checked out successfully!');
+                    await loadBookings();
+                } else {
+                    alert('Failed to check out guest: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        // Cancel booking
+        async function cancelBooking(bookingId) {
+            if (!confirm('Are you sure you want to cancel this booking?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings/${bookingId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    await loadBookings();
+                } else {
+                    alert('Failed to cancel booking: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        // Added manual vacate function
+        async function manualVacate(bookingId) {
+            if (!confirm('Are you sure you want to manually vacate this room? This will end the booking immediately.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/bookings/${bookingId}/manual-vacate`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Room manually vacated successfully!');
+                    await loadBookings();
+                    await loadRooms(); // Refresh room list
+                } else {
+                    alert('Failed to vacate room: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Connection error. Please try again.');
+            }
+        }
+
+        // Added room management functions
+        async function addRoom() {
+            const roomNumber = document.getElementById('newRoomNumber').value.trim();
+            const roomType = document.getElementById('newRoomType').value;
+
+            if (!roomNumber || !roomType) {
+                showMessage('roomManagementMessage', 'Please fill in all fields', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/rooms`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ roomNumber, roomType })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('roomManagementMessage', 'Room added successfully!', 'success');
+                    document.getElementById('newRoomNumber').value = '';
+                    document.getElementById('newRoomType').value = '';
+                    await loadRooms();
+                    await loadRemoveRoomOptions();
+                } else {
+                    showMessage('roomManagementMessage', data.error || 'Failed to add room', 'error');
+                }
+            } catch (error) {
+                showMessage('roomManagementMessage', 'Connection error. Please try again.', 'error');
+            }
+        }
+
+        async function removeRoom() {
+            const roomNumber = document.getElementById('removeRoomSelect').value;
+
+            if (!roomNumber) {
+                showMessage('roomManagementMessage', 'Please select a room to remove', 'error');
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to remove Room ${roomNumber}? This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/rooms/${roomNumber}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('roomManagementMessage', 'Room removed successfully!', 'success');
+                    document.getElementById('removeRoomSelect').value = '';
+                    await loadRooms();
+                    await loadRemoveRoomOptions();
+                } else {
+                    showMessage('roomManagementMessage', data.error || 'Failed to remove room', 'error');
+                }
+            } catch (error) {
+                showMessage('roomManagementMessage', 'Connection error. Please try again.', 'error');
+            }
+        }
+
+        async function loadRemoveRoomOptions() {
+            try {
+                const response = await fetch(`${API_BASE}/rooms`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const select = document.getElementById('removeRoomSelect');
+                    select.innerHTML = '<option value="">Select Room to Remove</option>';
+                    
+                    data.rooms.forEach(room => {
+                        const option = document.createElement('option');
+                        option.value = room.room_number;
+                        option.textContent = `Room ${room.room_number} (${room.room_type})`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading rooms for removal:', error);
+            }
+        }
+
+        async function loadRoomStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/rooms/status`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayRoomStatus(data.rooms);
+                } else {
+                    showMessage('roomManagementMessage', 'Failed to load room status', 'error');
+                }
+            } catch (error) {
+                showMessage('roomManagementMessage', 'Connection error. Please try again.', 'error');
+            }
+        }
+
+        function displayRoomStatus(rooms) {
+            const statusContainer = document.getElementById('roomStatusList');
+            
+            if (rooms.length === 0) {
+                statusContainer.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">No rooms found.</p>';
+                statusContainer.classList.remove('hidden');
+                return;
+            }
+
+            let tableHTML = `
+                <div class="table-container" style="margin-top: 15px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Guest</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            rooms.forEach(room => {
+                const statusValue = room.status || room.occupancy_status || 'available';
+                const statusClass = statusValue === 'available' ? 'available' : 'occupied';
+                
+                tableHTML += `
+                    <tr>
+                        <td>Room ${room.room_number}</td>
+                        <td><span class="room-type ${room.room_type.toLowerCase().replace('-', '')}">${room.room_type}</span></td>
+                        <td><span class="status ${statusClass}">${statusValue}</span></td>
+                        <td>${room.guest_name || '-'}</td>
+                        <td>${room.check_in ? new Date(room.check_in).toLocaleDateString() : '-'}</td>
+                        <td>${room.check_out ? new Date(room.check_out).toLocaleDateString() : '-'}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            statusContainer.innerHTML = tableHTML;
+            statusContainer.classList.remove('hidden');
+        }
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            // Clear both session and persistent storage
+            sessionStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('rememberMe');
+
+            document.getElementById('dashboardPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            
+            // Clear forms
+            document.getElementById('loginForm').reset();
+            document.getElementById('bookingForm').reset();
+            document.getElementById('availabilityForm').reset();
+            
+            // Clear messages
+            clearMessages();
+        }
+
+        // Utility functions
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.remove('hidden');
+            setTimeout(() => element.classList.add('hidden'), 5000);
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = type;
+            element.classList.remove('hidden');
+            setTimeout(() => element.classList.add('hidden'), 5000);
+        }
+
+        function clearMessages() {
+            const messages = ['loginError', 'bookingMessage', 'availabilityResult', 'roomManagementMessage', 'registerError', 'registerMessage'];
+            messages.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.classList.add('hidden');
+                }
+            });
+        }
+
+        // Date validation
+        document.getElementById('checkIn')?.addEventListener('change', function() {
+            const checkInDate = this.value;
+            const checkOutInput = document.getElementById('checkOut');
+            checkOutInput.min = checkInDate;
+            
+            if (checkOutInput.value && checkOutInput.value <= checkInDate) {
+                checkOutInput.value = '';
+            }
+        });
+
+        document.getElementById('availabilityCheckIn')?.addEventListener('change', function() {
+            const checkInDate = this.value;
+            const checkOutInput = document.getElementById('availabilityCheckOut');
+            checkOutInput.min = checkInDate;
+            
+            if (checkOutInput.value && checkOutInput.value <= checkInDate) {
+                checkOutInput.value = '';
+            }
+        });
+
+        // Registration UI toggles
+        document.getElementById('showRegisterBtn').addEventListener('click', () => {
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('showRegisterBtn').classList.add('hidden');
+            // clear prior messages
+            const regErr = document.getElementById('registerError');
+            const regMsg = document.getElementById('registerMessage');
+            regErr && regErr.classList.add('hidden');
+            regMsg && regMsg.classList.add('hidden');
+        });
+
+        document.getElementById('cancelRegisterBtn').addEventListener('click', () => {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('showRegisterBtn').classList.remove('hidden');
+            // reset form and messages
+            document.getElementById('registerForm').reset();
+            const regErr = document.getElementById('registerError');
+            const regMsg = document.getElementById('registerMessage');
+            regErr && regErr.classList.add('hidden');
+            regMsg && regMsg.classList.add('hidden');
+        });
+
+        // Registration submit handler
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirm = document.getElementById('regConfirm').value;
+
+            if (!username || !password || !confirm) {
+                showError('registerError', 'Please fill in all fields');
+                return;
+            }
+            if (password.length < 6) {
+                showError('registerError', 'Password must be at least 6 characters');
+                return;
+            }
+            if (password !== confirm) {
+                showError('registerError', 'Passwords do not match');
+                return;
+            }
+
+            try {
+                const resp = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await resp.json();
+                if (!data.success) {
+                    showError('registerError', data.error || 'Registration failed');
+                    return;
+                }
+
+                currentUser = data.user;
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('currentUser');
+                showMessage('registerMessage', 'Registration successful! Logging you in...', 'success');
+
+                // hide register and proceed to dashboard
+                setTimeout(() => {
+                    document.getElementById('registerForm').classList.add('hidden');
+                    document.getElementById('showRegisterBtn').classList.remove('hidden');
+                    showDashboard();
+                }, 500);
+            } catch (err) {
+                showError('registerError', 'Connection error. Please ensure the server is running.');
+            }
+        });
+    </script>
+</body>
+</html>
